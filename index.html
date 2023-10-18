@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+        <!-- meta viewport tag needed to make site responsive on mobile devices https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>WCC Portfolio - Demo Page</title>
+
+        <!-- including for some global styling -->
+        <link rel="stylesheet" href="style.css">
+
+    </head>
+    <body>
+        <!-- if you have sub-pages think about adding a simple back button -->
+        <nav>
+            <a href="../">HOME</a>
+        </nav>
+        <header class="documentation-header">
+            <section class="center-text">
+                <h1>Glass In the Park</h1>
+                <h2>Yining LI</h6>
+                <p>VR interactive walkthrough works</p> 
+            </section>
+        </header>
+
+        <main class="documentation-page">
+            <section>
+                <div class="responsive-video centered-content">
+                    <iframe src="https://player.vimeo.com/video/862677594?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" width="1920" height="1080" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" title="Chaotic Reverie"></iframe>                </div>
+            </section>
+            <section>
+                <h3>Introduction</h3>
+                <p>This is a VR work that combines audio and visual elements, inspired by a song called "Glass in the Park". The experience I hope to provide to the viewers is a comfortable and immersive scene exploration, with interactive elements included.</p>
+            </section>
+            <section>
+                <h3>Concept and Background Research</h3>
+                
+                <p>When I first decided to create a VR work, I was drawn to the idea of designing an interactive narrative experience that differed from the traditional interactive gameplay experience. As someone who loves theatre and literature, I was inspired by The Under Presents: Tempest [2], an immersive VR theatrical experience that uses dialogue and guided design to engage players and propel the storyline. Unlike traditional VR games that prioritize gameplay over storytelling, the Under Presents VR experience uses interactivity to advance the plot. In this type of work, the story is the focus. Moreover, the immersive environment created by VR is advantageous in shaping the atmosphere to achieve a lifelike experience for the players. In comparison to movies and plays, which are also narrative genres, the form of theatre, unlike movies, cannot use editing and transition techniques, making it actually closer to the expression form of VR. </p>
+                <p>In theatre, directors use actor placement and changes in scenery to signify transitions between locations. I used these same techniques to design my work. I placed multiple scenes in one Unity scene and used portals and scripts to switch between them. Props were used to bridge the gap between transitions to make them seem less abrupt. As a first-person narrative experience, my work required guiding players along a predetermined path. I implemented trigger points and added barriers to control the player's movements. </p>
+                <p>The works of VR artist Christophe Bruchansky[3] also influenced my work. His models have a rough texture, but this did not detract from his artistic expression; rather, it highlighted his personal style. </p>
+                <p>To create the dialogue for my work, I used prompts [4] to input descriptions of the scene and concepts and input the generated monologue to refine them.</p>
+                
+               
+                
+            </section>
+            <section>
+                <h3>Technical Implementation</h3>
+
+                <p>Several scenes are divided into two stages, in the dream (red) and outside the dream (pink), using different skybox renderings. The most important and most difficult problem is that the scenes in the portal and outside the portal must be in the same scene, but they must have their own reflections. At the beginning, I only wrote the script to switch the skybox. Later I found that if I only switched the skybox, the reflections of the object would still show the color of the previously rendered color. I referred to a tutorial [5] and switched to custom in the skybox reflections source. After that, you need to save the “cubemap” rendered by the respective skybox and switch the “cubemap” at the same time when switching the skybox. But the second act will be displayed in the portal in the first act. If he only switches after entering, the red skybox will still be rendered in the portal before entering. Therefore, I added a Reflection Probe to each scene separately, and baked the reflections in the second, third and fourth scenes under the pink skybox, so that even if the skybox changes in the main scene, it will not affect the reflection colour of the object.  </p>
+                <p>Portal [6] itself acts as a mask, and the internal display depends on whether the layer is rendered. The objects in the portal need to be put into the same layer. The "show" script is triggered when a player collides with each scene switch, and the objects that need to appear and disappear are dragged into the game objects list in the script. </p>
+
+                <!-- example of styling for three images, you can write your own styling -->
+                <div class="flex-container flex-basis-half">
+                    <div class="flex-item">
+                        <img src="assets\images\1.png"/>
+                    </div>
+                    <div class="flex-item">
+                        <img src="assets\images\2.png"/>
+                    </div>
+                    
+                   
+                    
+                </div>
+                
+                
+                <p>Interaction Design - Scene One
+                    The interactive logic of this scene is as follows: when the elevator button is pressed, the elevator door opens. Once the player enters the elevator, the door closes and the elevator ascends. Upon reaching the designated floor, the door opens again.
+                    The script is divided into two parts. Firstly, the “VRButton” script is attached to the elevator button trigger. Secondly, the “MyDoor” script is attached to the elevator platform. When the button is pressed, the “My_button” function in “MyDoor” is activated. Once the player collides with the trigger on the platform, the door closes and an animation is triggered. Initially, I attached the “MyDoor” script directly to the moving platform. I discovered that the box collider had to be set as “is trigger”. This setting resulted in the player falling off the platform while moving. The issue was eventually resolved by creating a new empty object and transferring the script onto it.
+                    </p>
+                <p>Interaction Design - Scene Two
+                    The interactive logic of this scene is as follows: as the player approaches the ghost, it gradually dissolves and transforms into a holographic butterfly.
+                    The dissolving material of the ghost was referenced from [7] tutorial. Furthermore, a trigger was set to change the material of the ghost to transparent. The holographic butterfly material was created using tutorial [8]. When designing the flight path of the butterfly, animating it frame by frame resulted in a stiff and unnatural effect. In addition, the flapping animation of the butterfly wings had to be synchronized with its movement animation. Eventually, I found the Path Creator plugin and used it to design the flight path. Additionally, the follower script was added to the butterfly to cause it to stop moving once it reaches the endpoint. The pavilion at the bottom of the lake also utilized the portal effect.
+                    </p>
+                <p>Interaction Design - Scene Three
+                    As the player reaches the trigger point, roots start growing. Once the roots are touched, the digital tree becomes larger.
+                    The root growth was referenced from tutorial [9]. It was imperative that the UV of the object be adjusted correctly to enable proper growth of the material. As the length of each branch was different, conditions had to be set in the script to limit growth to prevent the branches from growing too long or too short (e.g. -1 or +1). The flow materials in the electronic tree follow the tutorial [10], wherein a 'flowmap' needs to be drawn to illustrate the flow direction from the branches towards the trunk. The tree model is divided into three parts, and each part's UV needs to be exported separately in Blender. In the electronic tree, XR Simple Interactable is used to trigger the scaling, which then triggers the flight path to the fourth scene.
+                    </p>
+                <p>Scene Design - Scene Fourth
+                    The mirrors in the environment provide a better visual angle to the scene. An animation of a lotus flower blooming was also created, and when flying past the lotus, it will bloom accordingly. 
+                    </p>
+            
+                <!-- example of styling for three images, you can write your own styling -->
+                <div class="flex-container flex-basis-half">
+                    <div class="flex-item">
+                        <img src="assets\images\3.png"/>
+                    </div>
+                    <div class="flex-item">
+                        <img src="assets\images\4.png"/>
+                    </div>
+                </div>
+                
+
+                <!-- default flex item is for 4 & follows media query styling for home page -->
+                
+                
+         
+            </section>
+            <section>
+                <h3>Reflection and Future Development</h3>
+                <p>As the first relatively complete VR project, I have found it challenging to balance all aspects of it. It covers modelling, scripting, material, animation, lighting, and sound, while also considering optimization and user experience. I hope to make this project as complete as possible but often find myself caught up in small details. Fortunately, I created most of the content myself and referenced many online tutorials, which gave me a lot of inspiration and helped me quickly learn new skills. Because of my familiarity and demand for scaling, I mostly used SketchUp to model and then imported to Blender or Unity, wasting a lot of time. As the most suitable 3D modelling software for Unity, I should learn more about Blender. </p>
+                <p>The scene switching is also relatively rigid, and the interactions need to be improved. The fun quotient is low, and the exploratory nature of the scene is insufficient. The positioning of the entire work is not clear enough, resulting in a lack of highlights in the finished product. While creating each interaction, I am also considering what is missing from the logic compared to more mature works, and it's only after the practice that I realize the gap. Overall, the process of creating this complete work allowed me to express what I wanted to express, and I am satisfied with the overall concept, but I need more experience to improve both visually and technically.</p>
+                
+
+            </section>
+            <section>
+                <h3>References</h3>
+                <ul>
+                    <li>[1] https://www.thechinastory.org/yearbooks/yearbook-2019-china-dreams/forum-illusions-and-transformations-the-many-meanings-of-meng-%E5%A4%A2/zhuangzi-and-his-butterfly-dream-the-etymology-of-meng-%E5%A4%A2/</li>
+                    <li>[2] The Under Presents: Tempest : https://www.youtube.com/watch?v=fSQD8DBLODE</li>
+                    <li>[3] Christophe Bruchansky; https://bruchansky.name/</li>
+                    <li>[4]Chat GPT prompt: Please write a one-man show. The main plot is that the protagonist robot dreams that he has become a human being, and gradually feels human emotions, perceives the five senses of human beings, and changes in his heart from initial doubts to gradual acceptance to enjoyment. In the first act, the robot takes the elevator to the Illusory Pavilion, ready to enter the illusion. In the second scene, the robot is in an indoor garden and walks up the bridge. He sees a butterfly, the incarnation of Zhuangzi, flying to a tree and stopping. In the third act, she enters the corridor, and the butterfly flies forward to lead it. It travels along the corridor, enters the realm of plants, and feels the wind and the photosynthesis of trees. When she came to the tree, the roots of the plant began to grow, and the electronic tree in front of her gradually grew larger. In the fourth act, it flies up and enters the dream version of the first act scene. It flies like a butterfly and circles down the spiral corridor. The lotus flowers on the ground bloom after it passes. Eventually she reached the surface, ending the journey. The text needs to be written in a stream of consciousness, and all of it is composed of short sentences. The content of the text needs to highlight the changing process of the protagonist's state of mind and perception of the environment.</li>
+                    <li>[5] Skybox Tutorial: https://igorsgames.wordpress.com/2015/05/11/how-to-change-reflection-skybox-from-script-in-unity-5/</li>
+                    <li>[6] Portal Tutorial: https://www.youtube.com/watch?v=9u3QQi6Gnx0&t=363s</li>
+                    <li>[7] Dissolving Tutorial: https://www.youtube.com/watch?v=we406Hc_WrM&t=799s</li>
+                    <li>[8] Holographic Tutorial: https://www.bilibili.com/video/BV1ce4y1W79X/?</li>
+                    <li>[9] Grow Tutorial: https://www.youtube.com/watch?v=LKaEMBLIw9s&t=880s</li>
+                    <li>[10] Flow Tutorial: https://www.youtube.com/watch?v=SA6Y3L-X0Po</li>
+                    
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <!-- normally information like contact details etc  -->
+            <!-- read more about semantic HTML https://www.w3schools.com/html/html5_semantic_elements.asp -->
+            
+         </footer>
+    </body>
+</html>
